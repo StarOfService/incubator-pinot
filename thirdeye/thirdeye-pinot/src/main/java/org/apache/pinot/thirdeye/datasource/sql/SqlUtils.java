@@ -587,9 +587,11 @@ public class SqlUtils {
    * @param timeFormat
    * @return Redshift's time format
    */
-  private static String timeFormatToPostgreSQLFormat(String timeFormat) {
+  private static String timeFormatToRedshiftSQLFormat(String timeFormat) {
     if (timeFormat == "yyyy-MM-dd hh:mm:ss")
       timeFormat = "yyyy-MM-dd HH:mm:ss";
+    if (timeFormat.contains("SSSSS"))
+      timeFormat = timeFormat.replaceAll("SSSSSS", "S");
     if (timeFormat.contains("mm"))
       timeFormat = timeFormat.replaceAll("(?i):mm", ":mi");
     if (timeFormat.contains("HH"))
@@ -639,7 +641,7 @@ public class SqlUtils {
     } else if (sourceName.equals(MYSQL)) {
       return "UNIX_TIMESTAMP(STR_TO_DATE(CAST(" + timeColumn + " AS CHAR), '" + timeFormatToMySQLFormat(timeFormat) + "'))";
     } else if (sourceName.equals(REDSHIFT)) {
-      return "EXTRACT(EPOCH FROM to_timestamp(" + timeColumn + ", '" + timeFormatToPostgreSQLFormat(timeFormat) + "'))";
+      return "EXTRACT(EPOCH FROM to_timestamp(" + timeColumn + ", '" + timeFormatToRedshiftSQLFormat(timeFormat) + "'))";
     } else if (sourceName.equals(H2)){
       return "TO_UNIXTIME(PARSEDATETIME(CAST(" + timeColumn + " AS VARCHAR), '" + timeFormat + "'))";
     } else if (sourceName.equals(VERTICA)) {
