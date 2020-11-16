@@ -89,6 +89,7 @@ public class SqlUtils {
   private static final String H2 = "H2";
   private static final String VERTICA = "Vertica";
   private static final String BIGQUERY = "BigQuery";
+  private static final String REDSHIFT = "Redshift";
 
   /**
    * Insert a table to SQL database, currently only used by H2, that can be read by ThirdEye
@@ -580,6 +581,24 @@ public class SqlUtils {
     }
   }
 
+  /**
+   * Convert java SimpleDateFormat to Redshift's format
+   *
+   * @param timeFormat
+   * @return Redshift's time format
+   */
+  private static String timeFormatToRedshiftSQLFormat(String timeFormat) {
+    if (timeFormat == "yyyy-MM-dd hh:mm:ss")
+      timeFormat = "yyyy-MM-dd HH:mm:ss";
+    if (timeFormat.contains("SSSSS"))
+      timeFormat = timeFormat.replaceAll("SSSSSS", "S");
+    if (timeFormat.contains("mm"))
+      timeFormat = timeFormat.replaceAll("(?i):mm", ":mi");
+    if (timeFormat.contains("HH"))
+      timeFormat = timeFormat.replaceAll("HH", "HH24");
+    return timeFormat;
+  }
+
   private static String timeFormatToVerticaFormat(String timeFormat) {
     if (timeFormat.contains("mm")) {
       return timeFormat.replaceAll("(?i):mm", ":mi");
@@ -621,6 +640,8 @@ public class SqlUtils {
       return "TO_UNIXTIME(PARSE_DATETIME(CAST(" + timeColumn + " AS VARCHAR), '" + timeFormat + "'))";
     } else if (sourceName.equals(MYSQL)) {
       return "UNIX_TIMESTAMP(STR_TO_DATE(CAST(" + timeColumn + " AS CHAR), '" + timeFormatToMySQLFormat(timeFormat) + "'))";
+    } else if (sourceName.equals(REDSHIFT)) {
+      return "EXTRACT(EPOCH FROM to_timestamp(" + timeColumn + ", '" + timeFormatToRedshiftSQLFormat(timeFormat) + "'))";
     } else if (sourceName.equals(H2)){
       return "TO_UNIXTIME(PARSEDATETIME(CAST(" + timeColumn + " AS VARCHAR), '" + timeFormat + "'))";
     } else if (sourceName.equals(VERTICA)) {
