@@ -60,6 +60,7 @@ public class SqlResponseCacheLoader extends CacheLoader<SqlQuery, ThirdEyeResult
   private static final String MYSQL = "MySQL";
   private static final String VERTICA = "Vertica";
   private static final String BIGQUERY = "BigQuery";
+  private static final String REDSHIFT = "Redshift";
 
   public static final int INIT_CONNECTIONS = 20;
   public static int MAX_CONNECTIONS = 50;
@@ -75,11 +76,13 @@ public class SqlResponseCacheLoader extends CacheLoader<SqlQuery, ThirdEyeResult
   private Map<String, DataSource> mysqlDBNameToDataSourceMap = new HashMap<>();
   private Map<String, DataSource> verticaDBNameToDataSourceMap = new HashMap<>();
   private Map<String, DataSource> BigQueryDBNameToDataSourceMap = new HashMap<>();
+  private Map<String, DataSource> redshiftDBNameToDataSourceMap = new HashMap<>();
 
   private static Map<String, String> prestoDBNameToURLMap = new HashMap<>();
   private static Map<String, String> mysqlDBNameToURLMap = new HashMap<>();
   private static Map<String, String> verticaDBNameToURLMap = new HashMap<>();
   private static Map<String, String> BigQueryDBNameToURLMap = new HashMap<>();
+  private static Map<String, String> redshiftDBNameToURLMap = new HashMap<>();
 
   private static String h2Url;
   DataSource h2DataSource;
@@ -134,6 +137,32 @@ public class SqlResponseCacheLoader extends CacheLoader<SqlQuery, ThirdEyeResult
 
           mysqlDBNameToDataSourceMap.put(entry.getKey(), dataSource);
           mysqlDBNameToURLMap.putAll(dbNameToURLMap);
+        }
+      }
+    }
+
+    // Init Redshift datasources
+    if (properties.containsKey(REDSHIFT)) {
+      List<Map<String, Object>> mysqlMapList = ConfigUtils.getList(properties.get(REDSHIFT));
+      for (Map<String, Object> objMap: mysqlMapList) {
+        Map<String, String> dbNameToURLMap = (Map)objMap.get(DB);
+        String postgresqlUser = (String)objMap.get(USER);
+        String postgresqlPassword = getPassword(objMap);
+
+        for (Map.Entry<String, String> entry: dbNameToURLMap.entrySet()) {
+          DataSource dataSource = new DataSource();
+          dataSource.setInitialSize(INIT_CONNECTIONS);
+          dataSource.setMaxActive(MAX_CONNECTIONS);
+          dataSource.setUsername(postgresqlUser);
+          dataSource.setPassword(postgresqlPassword);
+          dataSource.setUrl(entry.getValue());
+
+          // Timeout before an abandoned(in use) connection can be removed.
+          dataSource.setRemoveAbandonedTimeout(ABANDONED_TIMEOUT);
+          dataSource.setRemoveAbandoned(true);
+
+          redshiftDBNameToDataSourceMap.put(entry.getKey(), dataSource);
+          redshiftDBNameToURLMap.putAll(dbNameToURLMap);
         }
       }
     }
@@ -338,6 +367,8 @@ public class SqlResponseCacheLoader extends CacheLoader<SqlQuery, ThirdEyeResult
       dataSource = prestoDBNameToDataSourceMap.get(SQLQuery.getDbName());
     } else if (sourceName.equals(MYSQL)) {
       dataSource = mysqlDBNameToDataSourceMap.get(SQLQuery.getDbName());
+    } else if (sourceName.equals(REDSHIFT)) {
+      dataSource = redshiftDBNameToDataSourceMap.get(SQLQuery.getDbName());
     } else if (sourceName.equals(VERTICA)) {
       dataSource = verticaDBNameToDataSourceMap.get(SQLQuery.getDbName());
     } else if (sourceName.equals(BIGQUERY)) {
@@ -372,6 +403,7 @@ public class SqlResponseCacheLoader extends CacheLoader<SqlQuery, ThirdEyeResult
     Map<String, Map<String,String>> dbNameToURLMap = new LinkedHashMap<>();
     dbNameToURLMap.put(PRESTO, prestoDBNameToURLMap);
     dbNameToURLMap.put(MYSQL, mysqlDBNameToURLMap);
+    dbNameToURLMap.put(REDSHIFT, redshiftDBNameToURLMap);
     dbNameToURLMap.put(VERTICA, verticaDBNameToURLMap);
     dbNameToURLMap.put(BIGQUERY, BigQueryDBNameToURLMap);
 
@@ -399,6 +431,8 @@ public class SqlResponseCacheLoader extends CacheLoader<SqlQuery, ThirdEyeResult
       return prestoDBNameToDataSourceMap.get(dbName);
     } else if (sourceName.equals(MYSQL)) {
       return mysqlDBNameToDataSourceMap.get(dbName);
+    } else if (sourceName.equals(REDSHIFT)) {
+      return redshiftDBNameToDataSourceMap.get(dbName);
     } else if (sourceName.equals(VERTICA)) {
       return verticaDBNameToDataSourceMap.get(dbName);
     } else if (sourceName.equals(BIGQUERY)) {
