@@ -76,9 +76,9 @@ export default Route.extend(AuthenticatedRouteMixin, {
     const feedbackType = model.feedbackType || this.get('feedbackType');
     const subGroup = model.subGroup || null;
 
-    // if there are no selections made, set to tier0-tier1 application by default
+    // if there are no selections made, set to sos-main application by default
     if (!appName && !subGroup) {
-      appName = 'tier0-tier1';
+      appName = 'sos-main';
       duration = '1w';
     }
 
