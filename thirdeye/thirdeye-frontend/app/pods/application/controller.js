@@ -40,6 +40,13 @@ export default Controller.extend({
       link: 'rootcause',
       title: 'Root Cause Analysis',
       isCustomLink: false
+    },
+    {
+      className: 'import-sql-metric',
+      link: 'self-serve.import-sql-metric',
+      title: 'Import SQL Metrics',
+      isCustomLink: false
     }
+
   ]
 });
