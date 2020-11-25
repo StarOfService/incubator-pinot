@@ -22,6 +22,7 @@ import Component from '@ember/component';
 import { setProperties, get, computed } from '@ember/object';
 import floatToPercent from 'thirdeye-frontend/utils/float-to-percent';
 import moment from 'moment';
+import config from 'thirdeye-frontend/config/environment';
 
 export default Component.extend({
   valueClassSuffix: '',
@@ -137,7 +138,7 @@ export default Component.extend({
       const lastTaskExecutionTimestamp = get(this, 'health').detectionTaskStatus.lastTaskExecutionTime;
       if (lastTaskExecutionTimestamp > 0) {
         const executionDateTime = new Date(lastTaskExecutionTimestamp);
-        return executionDateTime.toDateString() + ", " +  executionDateTime.toLocaleTimeString() + " (" + moment().tz(moment.tz.guess()).format('z') + ")";
+        return executionDateTime.toDateString() + ", " +  executionDateTime.toLocaleTimeString() + " (" + moment().tz(config.timeZone).format('z') + ")";
       }
       return "-";
     }
