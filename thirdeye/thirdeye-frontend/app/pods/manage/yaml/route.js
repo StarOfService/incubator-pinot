@@ -12,6 +12,7 @@ import { toastOptions } from 'thirdeye-frontend/utils/constants';
 import { defaultSubscriptionYaml } from 'thirdeye-frontend/utils/yaml-tools';
 import { formatYamlFilter, redundantParse } from 'thirdeye-frontend/utils/yaml-tools';
 import AuthenticatedRouteMixin from 'ember-simple-auth/mixins/authenticated-route-mixin';
+import config from 'thirdeye-frontend/config/environment';
 
 const CREATE_GROUP_TEXT = 'Create a new subscription group';
 
@@ -56,7 +57,7 @@ export default Route.extend(AuthenticatedRouteMixin, {
             dataset: detection_json.datasetNames,
             filters: formatYamlFilter(detectionInfo.filters),
             dimensionExploration: formatYamlFilter(detectionInfo.dimensionExploration),
-            lastDetectionTime: lastDetection.toDateString() + ", " +  lastDetection.toLocaleTimeString() + " (" + moment().tz(moment.tz.guess()).format('z') + ")",
+            lastDetectionTime: lastDetection.toDateString() + ", " +  lastDetection.toLocaleTimeString() + " (" + moment().tz(config.timeZone).format('z') + ")",
             rawYaml: detection_json.yaml
           });
 

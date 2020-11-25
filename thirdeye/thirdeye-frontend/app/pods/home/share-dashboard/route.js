@@ -274,8 +274,8 @@ export default Route.extend(AuthenticatedRouteMixin, {
       columns,
       start: get(this, 'startDate'),
       end: get(this, 'endDate'),
-      startDateDisplay:  moment(get(this, 'startDate')).tz(moment.tz.guess()).format(REPORT_DISPLAY_DATE_FORMAT),
-      endDateDisplay: moment(get(this, 'endDate')).tz(moment.tz.guess()).format(REPORT_DISPLAY_DATE_FORMAT),
+      startDateDisplay:  moment(get(this, 'startDate')).tz(config.timeZone).format(REPORT_DISPLAY_DATE_FORMAT),
+      endDateDisplay: moment(get(this, 'endDate')).tz(config.timeZone).format(REPORT_DISPLAY_DATE_FORMAT),
       appNameDisplay: get(this, 'appName'),
       subGroupDisplay: get(this, 'subGroup'),
       anomaliesCount: get(this, 'anomalies.content') ? get(this, 'anomalies.content').length : 0

@@ -11,6 +11,7 @@ import { toastOptions } from 'thirdeye-frontend/utils/constants';
 import { formatYamlFilter, redundantParse } from 'thirdeye-frontend/utils/yaml-tools';
 import moment from 'moment';
 import AuthenticatedRouteMixin from 'ember-simple-auth/mixins/authenticated-route-mixin';
+import config from 'thirdeye-frontend/config/environment';
 
 export default Route.extend(AuthenticatedRouteMixin, {
   notifications: service('toast'),
@@ -52,7 +53,7 @@ export default Route.extend(AuthenticatedRouteMixin, {
             dataset: detection_json.datasetNames,
             filters: formatYamlFilter(detectionInfo.filters),
             dimensionExploration: formatYamlFilter(detectionInfo.dimensionExploration),
-            lastDetectionTime: lastDetection.toDateString() + ", " +  lastDetection.toLocaleTimeString() + " (" + moment().tz(moment.tz.guess()).format('z') + ")",
+            lastDetectionTime: lastDetection.toDateString() + ", " +  lastDetection.toLocaleTimeString() + " (" + moment().tz(config.timeZone).format('z') + ")",
             rawYaml: detection_json.yaml
           });
 
