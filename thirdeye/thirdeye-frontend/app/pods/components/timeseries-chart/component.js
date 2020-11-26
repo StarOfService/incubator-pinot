@@ -4,6 +4,7 @@ import c3 from 'c3';
 import d3 from 'd3';
 import _ from 'lodash';
 import moment from 'moment';
+import config from 'thirdeye-frontend/config/environment';
 
 export default Component.extend({
   tagName: 'div',
@@ -39,7 +40,7 @@ export default Component.extend({
 
   tooltip: {
     format: {
-      title: (d) => moment(d).format('MM/DD hh:mm a'),
+      title: (d) => moment(d).tz(config.timeZone).format('MM/DD hh:mm a'),
       value: (val) => d3.format('.3s')(val),
       name: (name) => {
         if (name === 'Upper and lower bound') {

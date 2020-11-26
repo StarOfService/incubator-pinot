@@ -27,6 +27,7 @@
 import Component from '@ember/component';
 import moment from 'moment';
 import { get, set, computed } from '@ember/object';
+import config from 'thirdeye-frontend/config/environment';
 
 const RANGE_FORMAT = 'YYYY-MM-DD HH:mm';
 const DEFAULT_END_DATE = moment().startOf('day').add(1, 'days');
@@ -181,8 +182,8 @@ export default Component.extend({
         // Set date picker defaults to new start/end dates
         const isLast24Hours = name === 'Last 24 hours';
         this.setProperties({
-          activeRangeStart:  isLast24Hours ? this.get('activeRangeStart') : moment(start).format(RANGE_FORMAT),
-          activeRangeEnd: isLast24Hours ? this.get('activeRangeEnd') : moment(DEFAULT_END_DATE).format(RANGE_FORMAT)
+          activeRangeStart:  isLast24Hours ? this.get('activeRangeStart') : moment(start).tz(config.timeZone).format(RANGE_FORMAT),
+          activeRangeEnd: isLast24Hours ? this.get('activeRangeEnd') : moment(DEFAULT_END_DATE).tz(config.timeZone).format(RANGE_FORMAT)
         });
         // Reset options and highlight selected one. Bubble selection to parent controller.
         this.set('timeRangeOptions', this.newTimeRangeOptions(value, start, DEFAULT_END_DATE));
