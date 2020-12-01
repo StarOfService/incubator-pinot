@@ -337,20 +337,29 @@ public class SqlUtils {
       if (startUnits == endUnits) {
         return String.format(" %s = %d", timeField, startUnits);
       }
-
       return String.format(" %s BETWEEN %d AND %d", timeField, startUnits, endUnits);
     }
 
-    // NOTE:
-    // this is crazy. epoch rounds up, but timeFormat down
-    // we maintain this behavior for backward compatibility.
-    long startUnits = (long) Math.ceil(start.getMillis()) / 1000;
-    long endUnits = (long) Math.ceil(endExclusive.getMillis()) / 1000;
+    if (sourceName.equals(REDSHIFT)) {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern(timeFormat);
+        String startTime = dateTimeFormatter.print(start.getMillis());
+        String endTime = dateTimeFormatter.print(endExclusive.getMillis());
 
-    if (Objects.equals(startUnits, endUnits)) {
-      return String.format(" %s = %d", getToUnixTimeClause(timeFormat, timeField, sourceName), startUnits);
+        if (Objects.equals(start.getMillis(), endExclusive.getMillis())) {
+            return String.format(" %s = '%s'", getToUnixTimeClause(timeFormat, timeField, sourceName), startTime);
+        }
+        return String.format(" %s BETWEEN '%s' AND '%s'", getToUnixTimeClause(timeFormat, timeField, sourceName), startTime, endTime);
+    } else {
+        // NOTE:
+        // this is crazy. epoch rounds up, but timeFormat down
+        // we maintain this behavior for backward compatibility.
+        long startUnits = (long) Math.ceil(start.getMillis()) / 1000;
+        long endUnits = (long) Math.ceil(endExclusive.getMillis()) / 1000;
+        if (Objects.equals(startUnits, endUnits)) {
+            return String.format(" %s = %d", getToUnixTimeClause(timeFormat, timeField, sourceName), startUnits);
+        }
+        return String.format(" %s BETWEEN %d AND %d", getToUnixTimeClause(timeFormat, timeField, sourceName), startUnits, endUnits);
     }
-    return String.format(" %s BETWEEN %d AND %d", getToUnixTimeClause(timeFormat, timeField, sourceName), startUnits, endUnits);
   }
 
   /**
@@ -641,7 +650,7 @@ public class SqlUtils {
     } else if (sourceName.equals(MYSQL)) {
       return "UNIX_TIMESTAMP(STR_TO_DATE(CAST(" + timeColumn + " AS CHAR), '" + timeFormatToMySQLFormat(timeFormat) + "'))";
     } else if (sourceName.equals(REDSHIFT)) {
-      return "EXTRACT(EPOCH FROM " + timeColumn + ")";
+      return timeColumn;
     } else if (sourceName.equals(H2)){
       return "TO_UNIXTIME(PARSEDATETIME(CAST(" + timeColumn + " AS VARCHAR), '" + timeFormat + "'))";
     } else if (sourceName.equals(VERTICA)) {
