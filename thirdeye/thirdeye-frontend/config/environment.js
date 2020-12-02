@@ -25,7 +25,7 @@ module.exports = function(environment) {
 
     https_only: false,
 
-    timeZone: "Europe/Paris",
+    timeZone: "CET",
 
     moment: {
       includeTimezone: 'all'
