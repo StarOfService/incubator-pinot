@@ -346,9 +346,9 @@ public class SqlUtils {
         String endTime = dateTimeFormatter.print(endExclusive.getMillis());
 
         if (Objects.equals(start.getMillis(), endExclusive.getMillis())) {
-            return String.format(" %s = '%s'", getToUnixTimeClause(timeFormat, timeField, sourceName), startTime);
+            return String.format(" %s = '%s'", timeField, startTime);
         }
-        return String.format(" %s BETWEEN '%s' AND '%s'", getToUnixTimeClause(timeFormat, timeField, sourceName), startTime, endTime);
+        return String.format(" (%s >= '%s' AND %s < '%s')", timeField, startTime, timeField, endTime);
     } else {
         // NOTE:
         // this is crazy. epoch rounds up, but timeFormat down
