@@ -56,7 +56,7 @@ public class DetectionConfigTuner {
 
   private static final String PROP_CLASS_NAME = "className";
   private static final String PROP_METRIC_URN = "metricUrn";
-  private static final String DEFAULT_TIMEZONE = "America/Los_Angeles";
+  private static final String DEFAULT_TIMEZONE = "CET";
 
   private static final DetectionRegistry DETECTION_REGISTRY = DetectionRegistry.getInstance();
   public static final String PROP_YAML_PARAMS = "yamlParams";

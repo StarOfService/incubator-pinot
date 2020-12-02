@@ -33,7 +33,7 @@ function Constants() {
   this.DATE_RANGE_FORMAT = 'MMM D, YYYY';
   this.DATE_HOUR_RANGE_FORMAT = 'MMM D, YYYY h a';
   this.DATE_TIME_RANGE_FORMAT = 'MMM D, YYYY hh:mm a';
-  this.TIME_ZONE = 'America/Los_Angeles';
+  this.TIME_ZONE = 'CET';
 
   // modes
   this.MODE_METRIC = 'metric';

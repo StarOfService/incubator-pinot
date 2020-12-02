@@ -179,7 +179,7 @@ $(document).ready( function() {
                 "SPLINE_REGRESSION|degree":[3,"int"],
                 "SPLINE_REGRESSION|pValueThreshold":[0.001,"double"],
                 "SPLINE_REGRESSION|logTransform":[false,"boolean"],
-                "SPLINE_REGRESSION|timezone":["America/Los_Angeles","string"],
+                "SPLINE_REGRESSION|timezone":["CET","string"],
                 "SPLINE_REGRESSION|weeklyEffectRemovedInPrediction":[true,"boolean"],
                 "SPLINE_REGRESSION|anomalyRemovalSeverityThreshold":[0.5,"double"],
                 "SPLINE_REGRESSION|recentAnomalyToleranceLength":[0,"int"],

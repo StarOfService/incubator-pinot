@@ -61,7 +61,7 @@ public class DashboardResource {
   private static final ThirdEyeCacheRegistry CACHE_REGISTRY_INSTANCE = ThirdEyeCacheRegistry
       .getInstance();
   private static final Logger LOG = LoggerFactory.getLogger(DashboardResource.class);
-  private static final String DEFAULT_TIMEZONE_ID = "UTC";
+  private static final String DEFAULT_TIMEZONE_ID = "CET";
 
   private final SummaryResource summaryResource;
   private final QueryCache queryCache;
